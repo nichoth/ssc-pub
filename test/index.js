@@ -1,22 +1,20 @@
 var test = require('tape')
-const got = require('got')
-const { spawn } = require('child_process')
-// var validate = require('ssb-validate')
-var ssbKeys = require("ssb-keys")
-// var timestamp = require('monotonic-timestamp')
+var got = require('got')
+var { spawn } = require('child_process')
+// var ssbKeys = require("ssb-keys")
 var xtend = require('xtend')
-var ssc = require('../')
+var ssc = require('@nichoth/ssc')
 
 var PATH = 'http://localhost:8888/.netlify/functions'
 
 var ntl
-var keys
+// var keys
 
 var testMsg = {
     keys: {
         public: 'vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519'
     },
-    // this is the message we created in the prev test
+    // this is a message we created previously
     msg: {
         previous: null,
         sequence: 1,
@@ -30,7 +28,7 @@ var testMsg = {
 
 test('setup', function (t) {
     ntl = spawn('npx', ['netlify', 'dev', '--port=8888'])
-    keys = ssbKeys.generate()
+    // keys = ssbKeys.generate()
 
     // ntl.stdout.on('data', function (d) {
     //     console.log('stdout', d.toString('utf8'))
@@ -55,7 +53,7 @@ test('demo', function (t) {
     t.plan(1)
     got(PATH + '/test')
         .then(function (res) {
-            t.pass('ok')
+            t.pass('netlify functions are working')
         })
         .catch(err => {
             t.error(err)
@@ -71,8 +69,8 @@ test('demo', function (t) {
 // @TODO
 // * create and sign msg client side
 
-// just copy paste a valid message into the test, since this is a test of the
-// backend -- no need to test *creating* the message
+// just copy paste a valid message into the test, since this is a test
+// of the backend -- no need to test *creating* the message
 test('publish', function (t) {
     got.post(PATH + '/publish', {
         json: testMsg,
