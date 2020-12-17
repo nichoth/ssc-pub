@@ -21,12 +21,17 @@
   "homepage": "https://github.com/nichoth/ssc-pub#readme",
   "devDependencies": {
     "got": "^11.8.1",
+    "netlify-cli": "^2.69.3",
+    "node-sass": "^5.0.0",
     "ssb-keys": "^8.0.0",
+    "tap-spec": "^5.0.0",
     "tape": "^5.0.1",
     "xtend": "^4.0.2"
   },
   "dependencies": {
     "@nichoth/ssc": "0.0.0",
-    "faunadb": "^4.0.0"
+    "auth0-js": "^9.14.0",
+    "faunadb": "^4.0.0",
+    "stripe": "^8.125.0"
   }
 }
