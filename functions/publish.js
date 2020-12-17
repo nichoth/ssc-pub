@@ -1,4 +1,4 @@
-var ssc = require('../')
+var ssc = require('@nichoth/ssc')
 
 // requests are like
 // { keys: { public }, msg: {} }
@@ -27,7 +27,7 @@ exports.handler = function (ev, ctx, cb) {
     // see https://github.com/ssb-js/ssb-validate/blob/main/index.js#L149
     // here state.id is the hash of the prev msg, and `msg` is the current
 
-    var isValid 
+    var isValid
     try {
         isValid = ssc.verifyObj(keys, null, msg)
     } catch (err) {
