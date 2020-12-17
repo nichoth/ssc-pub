@@ -121,5 +121,127 @@ Need to re-make the "client app" and the backend so they use normal stuff like x
 
 ----------------------------------------------
 
+* [subscriptions with checkout](https://stripe.com/docs/billing/subscriptions/checkout/fixed-price)
+* [subscriptions with elements](https://stripe.com/docs/billing/subscriptions/fixed-price)
+
+
+----------------------------------------------------
+
+* Where does the `card` variable come from?
+it was a naming error. You can see if you view [the full example](https://github.com/stripe-samples/subscription-use-cases/blob/master/fixed-price-subscriptions/client/vanillajs/script.js)
+
+See https://stripe.com/docs/billing/subscriptions/fixed-price . Make a test
+for each section. see the issue for tests
+
+stripe demo site:
+https://github.com/stripe/stripe-payments-demo
+https://stripe-payments-demo.appspot.com/
+
+
+https://stripe.com/docs/stripe-js
+
+
+[the checkout tutorial](https://stripe.com/docs/billing/subscriptions/checkout/fixed-price). I haven't read this one
+
+
+--------------------------------------------
+
+## 22-21-2020
+[stripe subscriptions](https://stripe.com/docs/billing/subscriptions/overview)
+
+reading https://stripe.com/docs/billing/subscriptions/checkout/fixed-price -- the stripe-hosted checkout page
+
+price id -- price_1HpPOxBnqQbRlIvQeMvblXi5
+
+*function URL:*
+/.netlify/functions/hello
+
+
+--------------------------------------------------------
+
+## 11-23-2020
+You can't use directories in netlify functions
+
+Need to be able to download messages
+
+### how to do auth on the replicate call?
+https://gomakethings.com/using-oauth-with-fetch-in-vanilla-js/
+
+First get an oauth token by calling with your key and secret, then use an `Authorirization` header in the fetch call to replicate. The header contains the oauth token.
+
+`createHistoryStream`
+request
+```js
+{
+    pubKey: myLatestSequenceNumber,
+    pubKey2: latestNumber
+}
+```
+
+response
+```js
+{
+    pubKey: [ latest + 1, latest+2... ]
+}
+```
+
+msg
+```js
+{
+    "key":"%SPzeq9OdZWh4X/4tIPpaYa61jU87Yw5lwBC0MwLI9dA=.sha256",
+    "value":{
+        "previous":null,
+        "sequence":1,
+        "author":"@RPFLJtoWjcQyYC51lEUxm4brAyE6Okln8LGeh4Z7sVw=.ed25519",
+        "timestamp":1579904787188,
+        "hash":"sha256",
+        "content":{"type":"about",
+            "about":"@RPFLJtoWjcQyYC51lEUxm4brAyE6Okln8LGeh4Z7sVw=.ed25519",
+            "image":"&vczwtGvZMt12nSSJ0BiBgYRNF5tOI3rjI/CCXMDIjHU=.sha256",
+            "name":"nichoth"
+        },
+        "signature": "CfDTwh0OjrUGaiVHcyrT0ZhRDLYQKhYFEQfKNbQWfMiMrJC" +
+            "gwoxLjldQm0fbBBPPvC8Y7288N/WQCZVt6JWSBA==.sig.ed25519"
+    },
+    "timestamp":1579904787189
+}
+```
+
+msg 2
+```js
+{
+    key '...',
+    value: {
+        previous: '%SPzeq9OdZWh4X/4tIPpaYa61jU87Yw5lwBC0MwLI9dA=.sha256',
+        sequence: 2
+        // ...
+    }
+}
+```
+
+---------------------------------------------------------
+
+## 11-24-2020
+example
+should have `data: { userName: '', publicKey: '', curve: '' }`
+no private key
+
+```js
+{
+    "ref": Ref(Collection("users"), "282415672351261196"),
+    "ts": 1605591423320000,
+    "data": {
+        "userName": "fooooo",
+        "secrets": {
+            "curve": "ed25519",
+            "public": "zhyS3C1K1ixjBSIy9ezwAbsI877ol61uza8fnP8RFXk=.ed25519",
+            "private": "SFg85EiJLHspP5HsTONBuJ3+4NRmZ5E7JlOndO2SUhLOHJLcLUrWLGMFIjL17PABuwjzvuiXrW7Nrx+c/xEVeQ==.ed25519",
+            "id": "@zhyS3C1K1ixjBSIy9ezwAbsI877ol61uza8fnP8RFXk=.ed25519"
+        }
+    }
+}
+```
+
+
 
 
