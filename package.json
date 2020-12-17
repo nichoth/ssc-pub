@@ -1,0 +1,31 @@
+{
+  "name": "ssc-pub",
+  "version": "0.0.0",
+  "description": "A pub server for ssc",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "tape test/*.js | tap-spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nichoth/ssc-pub.git"
+  },
+  "author": "Nick Thomas <nichoth@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nichoth/ssc-pub/issues"
+  },
+  "homepage": "https://github.com/nichoth/ssc-pub#readme",
+  "devDependencies": {
+    "got": "^11.8.1",
+    "ssb-keys": "^8.0.0",
+    "tape": "^5.0.1",
+    "xtend": "^4.0.2"
+  },
+  "dependencies": {
+    "@nichoth/ssc": "0.0.0"
+  }
+}
