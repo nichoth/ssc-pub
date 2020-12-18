@@ -60,7 +60,7 @@ exports.handler = function (ev, ctx, cb) {
         statusCode: 200,
         body: JSON.stringify({
             ok: true,
-            message: msg
+            msg: msg
         })
     })
 }

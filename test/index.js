@@ -1,32 +1,38 @@
 var test = require('tape')
 var got = require('got')
 var { spawn } = require('child_process')
-// var ssbKeys = require("ssb-keys")
+var ssbKeys = require("ssb-keys")
 var xtend = require('xtend')
+// const { scryptSync } = require('crypto')
 var ssc = require('@nichoth/ssc')
 
 var PATH = 'http://localhost:8888/.netlify/functions'
 
 var ntl
-// var keys
+var keys
+var msg
+var req
 
-var testMsg = {
-    keys: {
-        public: 'vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519'
-    },
-    // this is a message we created previously
-    msg: {
-        previous: null,
-        sequence: 1,
-        author: '@vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519',
-        timestamp: 1606692151952,
-        hash: 'sha256',
-        content: { type: 'test', text: 'woooo' },
-        signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
-    }
-}
+
+// var testReq = {
+//     keys: {
+//         public: 'vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519'
+//     },
+//     // this is a message we created previously
+//     msg: {
+//         previous: null,
+//         sequence: 1,
+//         author: '@vYAqxqmL4/WDSoHjg54LUJRN4EH9/I4A/OFrMpXIWkQ=.ed25519',
+//         timestamp: 1606692151952,
+//         hash: 'sha256',
+//         content: { type: 'test', text: 'woooo' },
+//         signature: 'wHdXRQBt8k0rFEa9ym35pNqmeHwA+kTTdOC3N6wAn4yOb6dsfIq/X0JpHCBZVJcw6Luo6uH1udpq12I4eYzBAw==.sig.ed25519'
+//     }
+// }
+
 
 test('setup', function (t) {
+    keys = ssbKeys.generate()
     ntl = spawn('npx', ['netlify', 'dev', '--port=8888'])
     // keys = ssbKeys.generate()
 
@@ -68,17 +74,22 @@ test('demo', function (t) {
 
 // @TODO
 // * create and sign msg client side
-
-// just copy paste a valid message into the test, since this is a test
-// of the backend -- no need to test *creating* the message
 test('publish', function (t) {
+
+    var content = { type: 'test', text: 'woooo' }
+    msg = ssc.createMsg(keys, null, content)
+    req = {
+        keys: { public: keys.public },
+        msg
+    }
+
     got.post(PATH + '/publish', {
-        json: testMsg,
+        json: req,
         responseType: 'json'
     })
         .then(function (res) {
             t.pass('got a response')
-            t.equal(res.body.message.signature, testMsg.msg.signature,
+            t.equal(res.body.msg.signature, req.msg.signature,
                 'should send back the message')
             t.end()
         })
@@ -89,32 +100,35 @@ test('publish', function (t) {
         })
 })
 
-// @TODO
-// need to publish a second message
-// make a createMsg function that takes the previous msg,
-// and puts its hash as the `previous` key
-// test('publish another message', function (t) {
-//     t.plan(1)
+test('publish another message', function (t) {
+    t.plan(2)
 
-//     got.post(PATH + '/publish', {
-//         json: testMsg,
-//         responseType: 'json'
-//     })
-//         .then(function (res) {
-//             t.pass('got a response')
-//             t.equal(res.body.message.signature, testMsg.msg.signature,
-//                 'should send back the message')
-//             // console.log('res', res.body)
-//         })
-//         .catch(err => {
-//             t.error(err)
-//         })
-// })
+    // @TODO get the prev msg from DB
+
+    var req2 = {
+        keys: { public: keys.public },
+        // in here we pass in the previous msg we created
+        msg: ssc.createMsg(keys, msg, { type: 'test2', text: 'ok' })
+    }
+
+    got.post(PATH + '/publish', {
+        json: req2,
+        responseType: 'json'
+    })
+        .then(function (res) {
+            t.pass('got a response')
+            t.equal(res.body.msg.signature, req2.msg.signature,
+                'should send back the message')
+        })
+        .catch(err => {
+            t.error(err)
+        })
+})
 
 test('publish with an invalid signature', function (t) {
     got.post(PATH + '/publish', {
-        json: xtend(testMsg, {
-            msg: xtend(testMsg.msg, { signature: 'bad' })
+        json: xtend(req, {
+            msg: xtend(req.msg, { signature: 'bad' })
         }),
         responseType: 'json'
     })
@@ -128,6 +142,10 @@ test('publish with an invalid signature', function (t) {
             t.end()
         })
 })
+
+
+// @TODO
+// publish with an invalid previous msg
 
 
 // test('get a feed', function (t) {
