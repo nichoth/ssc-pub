@@ -23,12 +23,6 @@ exports.handler = function (ev, ctx, cb) {
     console.log('**msg**', msg)
     console.log('**keys**', keys)
 
-    // @TODO
-    // need to lookup the previous message to make sure the new
-    // message contains its hash
-    // see https://github.com/ssb-js/ssb-validate/blob/main/index.js#L149
-    // here state.id is the hash of the prev msg, and `msg` is the current
-
     var isValid
     try {
         isValid = ssc.verifyObj(keys, null, msg)
@@ -60,11 +54,21 @@ exports.handler = function (ev, ctx, cb) {
     var client = new faunadb.Client({
         secret: envKey
     })
-    if (msg.previous !== null) {
-        // lookup the prev msg in db here
-        console.log('not null', msg)
-        var prevKey = msg.previous
-    }
+
+
+    // @TODO
+    // need to lookup the previous message to make sure the new
+    // message contains its hash
+    // see https://github.com/ssb-js/ssb-validate/blob/main/index.js#L149
+
+    // @TODO -- here, lookup the feed from the DB
+    db.getFeed(keys.public, (err, res) => {
+        // var id = ssc.getId(res.data)
+        if (msg.previous !== res.data.key) {
+            // return cb(422)
+        }
+        // check the sequence number too
+    })
 
 
 //     msg: {
@@ -78,6 +82,7 @@ exports.handler = function (ev, ctx, cb) {
 //     }
 
 
+    // msg is valid, write it to DB
     var hash = ssc.getId(msg)
     client.query(
         q.Create(q.Collection('posts'), {
@@ -107,7 +112,4 @@ exports.handler = function (ev, ctx, cb) {
                 })
             })
         })
-
-
 }
-
