@@ -3,13 +3,12 @@ var got = require('got')
 var { spawn } = require('child_process')
 var ssbKeys = require("ssb-keys")
 var xtend = require('xtend')
-// const { scryptSync } = require('crypto')
 var ssc = require('@nichoth/ssc')
 
 var PATH = 'http://localhost:8888/.netlify/functions'
 
 var ntl
-var keys
+var keys = ssbKeys.generate()
 var msg
 var req
 
@@ -32,9 +31,7 @@ var req
 
 
 test('setup', function (t) {
-    keys = ssbKeys.generate()
     ntl = spawn('npx', ['netlify', 'dev', '--port=8888'])
-    // keys = ssbKeys.generate()
 
     // ntl.stdout.on('data', function (d) {
     //     console.log('stdout', d.toString('utf8'))
@@ -45,6 +42,7 @@ test('setup', function (t) {
     })
 
     ntl.stdout.pipe(process.stdout)
+    ntl.stderr.pipe(process.stderr)
 
     ntl.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`);
@@ -75,7 +73,6 @@ test('demo', function (t) {
 // @TODO
 // * create and sign msg client side
 test('publish', function (t) {
-
     var content = { type: 'test', text: 'woooo' }
     msg = ssc.createMsg(keys, null, content)
     req = {
@@ -89,12 +86,13 @@ test('publish', function (t) {
     })
         .then(function (res) {
             t.pass('got a response')
+            console.log('in here', res.body)
             t.equal(res.body.msg.signature, req.msg.signature,
                 'should send back the message')
             t.end()
         })
         .catch(err => {
-            console.log('errrrr', err)
+            console.log('errrrrooooo', err)
             t.error(err)
             t.end()
         })
@@ -103,7 +101,7 @@ test('publish', function (t) {
 test('publish another message', function (t) {
     t.plan(2)
 
-    // @TODO get the prev msg from DB
+    // @TODO get the prev msg from DB (in the `publish` fn)
 
     var req2 = {
         keys: { public: keys.public },
@@ -121,6 +119,7 @@ test('publish another message', function (t) {
                 'should send back the message')
         })
         .catch(err => {
+            console.log('errrr22222', err)
             t.error(err)
         })
 })

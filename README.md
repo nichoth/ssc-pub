@@ -243,5 +243,10 @@ no private key
 ```
 
 
+---------------------------------------------------------
 
+## 12-18-2020
+
+Need to start the `netlify dev` server, then run the test with the port that is
+returned
 

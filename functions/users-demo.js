@@ -3,11 +3,11 @@ var faunadb = require('faunadb')
 var q = faunadb.query
 var envKey = process.env.FAUNA_KEY
 
-var keys = ssbKeys.generate()
-
 var client = new faunadb.Client({
     secret: envKey
 })
+
+var keys = ssbKeys.generate()
 
 client.query(
     // pass the id for the user: '1'
