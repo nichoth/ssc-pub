@@ -64,9 +64,32 @@ exports.handler = function (ev, ctx, cb) {
             // if the feed exists,
             // make sure `.previous` in the new msg is the existing msg key
 
-            // get('posts', msg.previous)
-            //    .then(writeMsg)
-            //    .catch(err => cb(null, {...}))
+            // console.log('floobobobb', res)
+
+            // res.data.value
+            // res.data.key
+
+            // return cb(null, {
+            //     statusCode: 200,
+            //     body: JSON.stringify({
+            //         lllllllllll: res,
+            //         ok: true
+            //     })
+            // })
+
+            console.log('res.data.key', res.data.key)
+            console.log('msg.previous', msg.previous)
+
+            if (res.data.key !== msg.previous) {
+                console.log('mismatch!!!!!', res.data.key, msg.previous)
+                return cb(null, {
+                    statusCode: 422,
+                    body: JSON.stringify({
+                        ok: false,
+                        error: new Error('mismatch previous')
+                    })
+                })
+            }
 
             writeMsg()
         })

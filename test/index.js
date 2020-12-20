@@ -112,8 +112,6 @@ test('publish', function (t) {
 test('publish another message', function (t) {
     t.plan(2)
 
-    // @TODO get the prev msg from DB (in the `publish` fn)
-
     var req2 = {
         keys: { public: keys.public },
         // in here we pass in the previous msg we created
@@ -125,12 +123,39 @@ test('publish another message', function (t) {
         responseType: 'json'
     })
         .then(function (res) {
+            // console.log('*****reseseses', res.body)
             t.pass('got a response')
             t.equal(res.body.msg.value.signature, req2.msg.signature,
                 'should send back the message')
         })
         .catch(err => {
             t.error(err)
+        })
+})
+
+// i guess this will work for now
+test('publish a msg with the wrong `previous`', function (t) {
+    var req = {
+        keys: { public: keys.public },
+        // this should fail b/c the previous msg is the same as the last test
+        msg: ssc.createMsg(keys, xtend(msg, { content: 'bad'}),
+            { type: 'test3', text: 'boo' })
+    }
+
+    got.post(PATH + '/publish', {
+        json: req,
+        responseType: 'json'
+    })
+        .then(res => {
+            console.log('resssss', res.body)
+            console.log('bbbbb', res.body.res)
+            t.fail('should return error for a duplicate previous')
+            t.end()
+        })
+        .catch(err => {
+            t.pass('should return error')
+            t.ok(err.message.includes('422'), 'should have error code 422')
+            t.end()
         })
 })
 
