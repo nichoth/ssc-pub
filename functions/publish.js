@@ -1,7 +1,6 @@
 var ssc = require('@nichoth/ssc')
 var faunadb = require('faunadb')
 var envKey = process.env.FAUNA_KEY
-// var xtend = require('xtend')
 
 // requests are like
 // { keys: { public }, msg: {} }
@@ -19,9 +18,6 @@ exports.handler = function (ev, ctx, cb) {
             })
         })
     }
-
-    // console.log('*****msg**', msg)
-    // console.log('**keys**', keys)
 
     var isValid
     try {
@@ -56,13 +52,9 @@ exports.handler = function (ev, ctx, cb) {
     })
 
 
-    // @TODO
-    // need to lookup the previous message to make sure the new
-    // message contains its hash
     // see https://github.com/ssb-js/ssb-validate/blob/main/index.js#L149
 
 
-    // @TODO -- here, lookup the feed from the DB
     client.query(
         q.Get(
             q.Match(q.Index('author'), '@' + keys.public)
@@ -71,6 +63,11 @@ exports.handler = function (ev, ctx, cb) {
         .then(res => {
             // if the feed exists,
             // make sure `.previous` in the new msg is the existing msg key
+
+            // get('posts', msg.previous)
+            //    .then(writeMsg)
+            //    .catch(err => cb(null, {...}))
+
             writeMsg()
         })
         .catch(err => {
@@ -87,22 +84,6 @@ exports.handler = function (ev, ctx, cb) {
                 })
             })
         })
-
-
-    // client.query(q.Get(q.Ref(`classes/posts/${id}`)))
-    //     .then(res => {
-
-    //     })
-    //     .catch(err => console.log(err))
-
-
-    // db.getFeed(keys.public, (err, res) => {
-    //     // var id = ssc.getId(res.data)
-    //     if (msg.previous !== res.data.key) {
-    //         // return cb(422)
-    //     }
-    //     // check the sequence number too
-    // })
 
 
 //     msg: {
