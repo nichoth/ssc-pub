@@ -137,7 +137,8 @@ test('publish another message', function (t) {
 test('publish a msg with the wrong `previous`', function (t) {
     var req = {
         keys: { public: keys.public },
-        // this should fail b/c the previous msg is the same as the last test
+        // ssc takes the hash of the previous msg, so this would preduce a 
+        // different `previous` hash
         msg: ssc.createMsg(keys, xtend(msg, { content: 'bad'}),
             { type: 'test3', text: 'boo' })
     }
@@ -178,8 +179,6 @@ test('publish with an invalid signature', function (t) {
 })
 
 
-// @TODO
-// publish with an invalid previous msg
 
 
 // test('get a feed', function (t) {
