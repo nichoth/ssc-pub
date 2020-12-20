@@ -73,8 +73,21 @@ test('demo', function (t) {
 // @TODO
 // * create and sign msg client side
 test('publish', function (t) {
-    var content = { type: 'test', text: 'woooo' }
+    var content = { type: 'test', text: 'waaaa' }
     msg = ssc.createMsg(keys, null, content)
+    console.log('**msg**', msg)
+
+    // {
+    //     previous: null,
+    //     sequence: 1,
+    //     author: '@x+KEmL4JmIKzK0eqR8vXLPUKSa87udWm+Enw2bsEiuU=.ed25519',
+    //     timestamp: NaN,
+    //     hash: 'sha256',
+    //     content: { type: 'test', text: 'waaaa' },
+    //     signature: 'RQXRrMUMqRlANeSBrfZ1AVerC9xGJxEGscx1MZrJUqAVylwVfi5i5r1msyZzqi7FuDf7DYr3OOHrTIO2P6ufDQ==.sig.ed25519'
+    //   }
+
+
     req = {
         keys: { public: keys.public },
         msg
@@ -86,13 +99,11 @@ test('publish', function (t) {
     })
         .then(function (res) {
             t.pass('got a response')
-            console.log('in here', res.body)
-            t.equal(res.body.msg.signature, req.msg.signature,
+            t.equal(res.body.msg.value.signature, msg.signature,
                 'should send back the message')
             t.end()
         })
         .catch(err => {
-            console.log('errrrrooooo', err)
             t.error(err)
             t.end()
         })
@@ -115,11 +126,10 @@ test('publish another message', function (t) {
     })
         .then(function (res) {
             t.pass('got a response')
-            t.equal(res.body.msg.signature, req2.msg.signature,
+            t.equal(res.body.msg.value.signature, req2.msg.signature,
                 'should send back the message')
         })
         .catch(err => {
-            console.log('errrr22222', err)
             t.error(err)
         })
 })

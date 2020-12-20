@@ -1,5 +1,5 @@
 exports.handler = function (ev, ctx, cb) {
-    console.log('**ev**', ev)
+    // console.log('**ev**', ev)
 
     cb(null, {
         statusCode: 200,

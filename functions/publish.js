@@ -1,7 +1,7 @@
 var ssc = require('@nichoth/ssc')
 var faunadb = require('faunadb')
 var envKey = process.env.FAUNA_KEY
-var xtend = require('xtend')
+// var xtend = require('xtend')
 
 // requests are like
 // { keys: { public }, msg: {} }
@@ -20,8 +20,8 @@ exports.handler = function (ev, ctx, cb) {
         })
     }
 
-    console.log('**msg**', msg)
-    console.log('**keys**', keys)
+    // console.log('*****msg**', msg)
+    // console.log('**keys**', keys)
 
     var isValid
     try {
@@ -61,14 +61,48 @@ exports.handler = function (ev, ctx, cb) {
     // message contains its hash
     // see https://github.com/ssb-js/ssb-validate/blob/main/index.js#L149
 
+
     // @TODO -- here, lookup the feed from the DB
-    db.getFeed(keys.public, (err, res) => {
-        // var id = ssc.getId(res.data)
-        if (msg.previous !== res.data.key) {
-            // return cb(422)
-        }
-        // check the sequence number too
-    })
+    client.query(
+        q.Get(
+            q.Match(q.Index('author'), '@' + keys.public)
+        )
+    )
+        .then(res => {
+            // if the feed exists,
+            // make sure `.previous` in the new msg is the existing msg key
+            writeMsg()
+        })
+        .catch(err => {
+            if (err.name === 'NotFound') {
+                // write the msg b/c the feed is new
+                return writeMsg()
+            }
+
+            return cb(null, {
+                statusCode: 500,
+                body: JSON.stringify({
+                    ok: false,
+                    error: err
+                })
+            })
+        })
+
+
+    // client.query(q.Get(q.Ref(`classes/posts/${id}`)))
+    //     .then(res => {
+
+    //     })
+    //     .catch(err => console.log(err))
+
+
+    // db.getFeed(keys.public, (err, res) => {
+    //     // var id = ssc.getId(res.data)
+    //     if (msg.previous !== res.data.key) {
+    //         // return cb(422)
+    //     }
+    //     // check the sequence number too
+    // })
 
 
 //     msg: {
@@ -83,33 +117,35 @@ exports.handler = function (ev, ctx, cb) {
 
 
     // msg is valid, write it to DB
-    var hash = ssc.getId(msg)
-    client.query(
-        q.Create(q.Collection('posts'), {
-            key: hash,
-            author: msg.author,
-            data: xtend(msg, { key: hash })
-        })
-    )
-        .then(res => {
-            console.log('res', res)
-            cb(null, {
-                statusCode: 200,
-                body: JSON.stringify({
-                    ok: true,
-                    res: res,
-                    msg: res.data
+    function writeMsg () {
+        var hash = ssc.getId(msg)
+        client.query(
+            q.Create(q.Collection('posts'), {
+                key: hash,
+                data: { value: msg, key: hash}
+            })
+        )
+            .then(res => {
+                // console.log('res here', res)
+                cb(null, {
+                    statusCode: 200,
+                    body: JSON.stringify({
+                        ok: true,
+                        res: res,
+                        msg: res.data
+                    })
                 })
             })
-        })
-        .catch(err => {
-            console.log('errrrr', err)
-            cb(null, {
-                statusCode: 500,
-                body: JSON.stringify({
-                    ok: false,
-                    error: err
+            .catch(err => {
+                // console.log('errrrr in publish', err)
+                cb(null, {
+                    statusCode: 500,
+                    body: JSON.stringify({
+                        ok: false,
+                        error: err
+                    })
                 })
             })
-        })
+            
+    }
 }

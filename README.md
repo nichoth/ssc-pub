@@ -250,3 +250,12 @@ no private key
 Need to start the `netlify dev` server, then run the test with the port that is
 returned
 
+-------------------------------------------------------
+
+## 12-19-2020
+
+Found those [fauna/netlify docs](https://docs.fauna.com/fauna/current/integrations/netlify.html)
+
+
+
+
