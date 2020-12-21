@@ -61,22 +61,6 @@ exports.handler = function (ev, ctx, cb) {
         )
     )
         .then(res => {
-            // if the feed exists,
-            // make sure `.previous` in the new msg is the existing msg key
-
-            // console.log('floobobobb', res)
-
-            // res.data.value
-            // res.data.key
-
-            // return cb(null, {
-            //     statusCode: 200,
-            //     body: JSON.stringify({
-            //         lllllllllll: res,
-            //         ok: true
-            //     })
-            // })
-
             console.log('res.data.key', res.data.key)
             console.log('msg.previous', msg.previous)
 

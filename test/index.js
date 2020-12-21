@@ -135,12 +135,12 @@ test('publish another message', function (t) {
 
 // i guess this will work for now
 test('publish a msg with the wrong `previous`', function (t) {
+    var content = { type: 'test3', text: 'boo' }
     var req = {
         keys: { public: keys.public },
-        // ssc takes the hash of the previous msg, so this would preduce a 
-        // different `previous` hash
-        msg: ssc.createMsg(keys, xtend(msg, { content: 'bad'}),
-            { type: 'test3', text: 'boo' })
+        // ssc takes the hash of the previous msg, so this would produce a 
+        // different `previous` hash than the one in the DB
+        msg: ssc.createMsg(keys, xtend(msg, { content: 'bad'}), content)
     }
 
     got.post(PATH + '/publish', {
@@ -148,9 +148,7 @@ test('publish a msg with the wrong `previous`', function (t) {
         responseType: 'json'
     })
         .then(res => {
-            console.log('resssss', res.body)
-            console.log('bbbbb', res.body.res)
-            t.fail('should return error for a duplicate previous')
+            t.fail('should return error for a bad `previous` hash')
             t.end()
         })
         .catch(err => {
@@ -180,20 +178,24 @@ test('publish with an invalid signature', function (t) {
 
 
 
-
-// test('get a feed', function (t) {
-//     got.post(PATH + '/feed', {
-//         json: { user: testMsg.msg.author },
-//         responseType: 'json'
-//     })
-//         .then(function (res) {
-//             t.pass('got a response')
-//             console.log('res', res.body)
-//         })
-//         .catch(err => {
-//             t.error(err)
-//         })
-// })
+// @TODO
+test('get a feed', function (t) {
+    got.post(PATH + '/feed', {
+        json: { author: msg.author },
+        responseType: 'json'
+    })
+        .then(function ({ body }) {
+            console.log('**res from feed**', body)
+            t.pass('got a response')
+            t.equal(body.msgs[0].value.signature, msg.signature,
+                'should send back the first message')
+            t.end()
+        })
+        .catch(err => {
+            t.error(err)
+            t.end()
+        })
+})
 
 
 
