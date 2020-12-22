@@ -11,19 +11,21 @@ exports.handler = function (ev, ctx, cb) {
     var req = JSON.parse(ev.body)
     var { author } = req
 
-    console.log('**author**', req, author)
-
     client.query(
-        q.Paginate(
-            q.Match(q.Index('author'), author)
+        q.Map(
+            q.Paginate(
+                q.Match(q.Index('author'), author)
+            ),
+            q.Lambda( 'post', q.Get(q.Var('post')) )
         )
     )
         .then(function (res) {
+            // console.log('**hhhhh**', res)
             return cb(null, {
                 statusCode: 200,
                 body: JSON.stringify({
                     ok: true,
-                    msgs: res
+                    msgs: res.data.map(post => post.data)
                 })
             })
         })

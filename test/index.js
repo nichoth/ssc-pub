@@ -115,6 +115,7 @@ test('publish another message', function (t) {
     var req2 = {
         keys: { public: keys.public },
         // in here we pass in the previous msg we created
+        // createMsg(keys, prevMsg, content)
         msg: ssc.createMsg(keys, msg, { type: 'test2', text: 'ok' })
     }
 
@@ -185,7 +186,7 @@ test('get a feed', function (t) {
         responseType: 'json'
     })
         .then(function ({ body }) {
-            console.log('**res from feed**', body)
+            // console.log('**res from /feed**', body)
             t.pass('got a response')
             t.equal(body.msgs[0].value.signature, msg.signature,
                 'should send back the first message')

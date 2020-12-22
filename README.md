@@ -257,5 +257,11 @@ returned
 Found those [fauna/netlify docs](https://docs.fauna.com/fauna/current/integrations/netlify.html)
 
 
+-----------------------------------------------------
+
+## 12-21-2020
+
+Starting the function to get a feed.
+
 
 
